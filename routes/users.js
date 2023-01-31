@@ -114,12 +114,15 @@ router.post('/register', async (req, res)=>{
             "zip": req.body.zip,
             "country": req.body.country
         });
+
+        console.log('user', user);
         const savedUser = await user.save();
         if (!savedUser){
             return res.status(400).json({success: false, error: 'Unable to register this user', data: null});
         }
         return res.status(201).json({success: true, message: 'This user has been registered', data: savedUser})
     } catch (err) {
+        console.log('catch err', err);
         return res.status(500).json({success: false, error: err, data: null})
     }
 });
