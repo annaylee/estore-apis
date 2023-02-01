@@ -139,7 +139,7 @@ router.post('/', uploadOptions.single('image'), async (req,res)=>{
 
 // Update an Existing Product by id
 // Postman PUT Request: http://localhost:3000/api/v1/products/63cf1b67a72e858ebc611fd3
-router.put('/:id', async (req,res)=>{
+router.put('/:id', uploadOptions.single('image'), async (req,res)=>{
 
     try {
         // Check to see if the product id is valid
@@ -151,8 +151,25 @@ router.put('/:id', async (req,res)=>{
         if (!category){
             return res.status(400).json({success: false, error: 'This category id is invalid', data: null});
         }
+        // Check to be sure the image file exists
+        if (!req.file) {
+        return res.status(400).json({success: false, error: 'Missing Product Image', data: null});
+        }
         // Must use {new: true} to return the updated category to the 'product' variable
-        const product = await Product.findByIdAndUpdate(req.params.id, req.body, {new: true});
+        const product = await Product.findByIdAndUpdate(req.params.id, 
+            {
+                name: req.body.name,
+                description: req.body.description,
+                richDescription: req.body.richDescription,
+                image: `${req.protocol}://${req.get('host')}/public/uploads/${req.file.filename}`,  
+                brand: req.body.brand,
+                price: req.body.price,
+                category: req.body.category,
+                countInStock: req.body.countInStock,
+                rating: req.body.rating,
+                numReviews: req.body.numReviews,
+                isFeatured: req.body.isFeatured,
+            }, {new: true});
         if (!product){
             return res.status(400).json({success: false, error: 'Unable to update this product', data: null});
         }

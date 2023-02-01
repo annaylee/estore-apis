@@ -42,8 +42,7 @@ router.get('/:id', async (req,res)=>{
     }
 });
 
-// Post a new User
-// Useful for Admin to add a new User from the Admin Panel
+// Post a new User ( Useful for Admin to add a new User from the Admin Panel )
 // Postman POST Request: http://localhost:3000/api/v1/users with 'Body' -> 'Raw' -> 'JSON'
 // All JSON field names ('name', 'email', 'phone') must be quoted or Postman will return Syntax Error
 router.post('/', async (req,res)=>{
@@ -115,7 +114,6 @@ router.post('/register', async (req, res)=>{
             "country": req.body.country
         });
 
-        console.log('user', user);
         const savedUser = await user.save();
         if (!savedUser){
             return res.status(400).json({success: false, error: 'Unable to register this user', data: null});
