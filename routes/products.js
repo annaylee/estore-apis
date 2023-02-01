@@ -233,22 +233,21 @@ router.get('/get/featured/:count', async (req,res)=>{
 });
 
 // Upload Images Gallery by Updating (Normally this is done after a product is created)
+// When using Postman to test on Render, this feature returns a 520 server error sometimes 
+// when you pick two or more photos to upload. Keep trying and finally get it work.
 router.put('/gallery-images/:id', uploadOptions.array('images',15), async (req,res)=>{
 
         // Check to see if the product id is valid
         if(!mongoose.isValidObjectId(req.params.id)){
-            console.log('invalid object id');
-        return res.status(400).json({success: false, error: 'This product id is invalid', data: null});
+           return res.status(400).json({success: false, error: 'This product id is invalid', data: null});
         }
         // The product schema, 'images' field is an array of strings
         let imagePaths = [];
-        console.log('req.files', req.files);
         if (req.files){
             req.files.map(file=>{
                 imagePaths.push(`${req.protocol}://${req.get('host')}/public/uploads/${file.filename}`);
             });
         } 
-        console.log('imagePaths', imagePaths);
         // Update gallery images
         const product = await Product.findByIdAndUpdate(req.params.id, { images: imagePaths}, {new: true});
         if (!product){
